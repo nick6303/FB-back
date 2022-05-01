@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const postSchema = new mongoose.Schema(
   {
     user: {
-      type: mongoose.SchemaTypes.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: 'user',
       required: [true, '請輸入您的名字'],
     },

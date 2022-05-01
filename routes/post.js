@@ -5,14 +5,14 @@ const errorHelper = require('../utils/errorHelper')
 const Post = require('../models/post')
 
 router.get('/', async (req, res) => {
-  const timeSort = req.query.timeSort == 'asc' ? 'createdAt' : '-createdAt'
+  const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
   const q =
     req.query.q !== undefined ? { content: new RegExp(req.query.q) } : {}
   try {
     const posts = await Post.find(q)
       .populate({
         path: 'user',
-        select: 'name photo ',
+        select: 'name photo',
       })
       .sort(timeSort)
     res.status(200).json({
@@ -46,11 +46,14 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const data = req.body
+  if (data.content === '') {
+    errorHelper(res, '內容未填寫')
+  }
   const params = {
-    name: data.name,
+    user: data.user,
     content: data.content,
   }
-  if (data.image) {
+  if (data.image !== undefined) {
     params.params = data.image
   }
   try {
@@ -59,7 +62,7 @@ router.post('/', async (req, res) => {
       status: 'success',
       data: newPost,
     })
-  } catch {
+  } catch (error) {
     errorHelper(res, '欄位未填寫正確', error)
   }
 })
@@ -99,10 +102,10 @@ router.patch('/:id', async (req, res) => {
   const params = {
     content: data.content,
   }
-  if (image !== undefined) {
+  if (data.image !== undefined) {
     params.image = data.image
   }
-  if (likes !== undefined) {
+  if (data.likes !== undefined) {
     params.likes = data.likes
   }
   try {

@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const id = req.params.id
   try {
-    const user = await User.find({ _id: id })
+    const user = await User.find({ _id: id }, { email: 0 })
     if (user) {
       res.status(200).json({
         status: 'success',
@@ -51,7 +51,7 @@ router.post('/', async (req, res) => {
       status: 'success',
       data: newUser,
     })
-  } catch {
+  } catch (error) {
     errorHelper(res, '欄位未填寫正確', error)
   }
 })
@@ -88,21 +88,24 @@ router.delete('/:id', async (req, res) => {
 router.patch('/:id', async (req, res) => {
   const id = req.params.id
   const data = req.body
-  const params = {
-    name: data.name,
+  const params = {}
+  if (data.name !== undefined) {
+    params.name = data.name
   }
-  if (params.photo !== undefined) {
-    params.photo = data.photo
+  if (data.email !== undefined) {
     params.email = data.email
+  }
+  if (data.photo !== undefined) {
+    params.photo = data.photo
   }
 
   try {
-    const post = await Post.findByIdAndUpdate(id, { $set: params })
-    if (post) {
-      Object.assign(post, data)
+    const user = await User.findByIdAndUpdate(id, { $set: params })
+    if (user) {
+      Object.assign(user, data)
       res.status(200).json({
         status: 'success',
-        data: post,
+        data: user,
       })
     } else {
       errorHelper(res, '或查無此ID')
