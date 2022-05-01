@@ -4,7 +4,7 @@ const errorHelper = require('../utils/errorHelper')
 
 const Post = require('../models/post')
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   const timeSort = req.query.timeSort == 'asc' ? 'createdAt' : '-createdAt'
   const q =
     req.query.q !== undefined ? { content: new RegExp(req.query.q) } : {}
@@ -27,7 +27,7 @@ router.get('/', (req, res) => {
   }
 })
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   const id = req.params.id
   try {
     const post = await Post.findOne({ _id: id })
