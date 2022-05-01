@@ -3,7 +3,7 @@ const postSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'User',
+      ref: 'user',
       required: [true, '請輸入您的名字'],
     },
     content: {
