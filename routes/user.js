@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const id = req.params.id
   try {
-    const user = await User.find({ _id: id }, { email: 0 })
+    const user = await User.findById(id, { email: 0 })
     if (user) {
       res.status(200).json({
         status: 'success',

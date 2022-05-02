@@ -30,7 +30,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const id = req.params.id
   try {
-    const post = await Post.findOne({ _id: id })
+    const post = await Post.findById(id).populate({
+      path: 'user',
+      select: 'name photo',
+    })
     if (post) {
       res.status(200).json({
         status: 'success',
