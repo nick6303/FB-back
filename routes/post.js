@@ -57,7 +57,7 @@ router.post('/', async (req, res) => {
     content: data.content,
   }
   if (data.image !== undefined) {
-    params.params = data.image
+    params.image = data.image
   }
   try {
     const newPost = await Post.create(params)
