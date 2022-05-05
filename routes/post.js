@@ -49,7 +49,7 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const data = req.body
-  if (data.content === '') {
+  if (data.content === '' || data.content === undefined) {
     errorHelper(res, '內容未填寫')
   }
   const params = {
