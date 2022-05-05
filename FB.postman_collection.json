@@ -316,13 +316,13 @@
 		{
 			"key": "baseUrl",
 			"value": "https://protected-fjord-25254.herokuapp.com",
-			"type": "string",
-			"disabled": true
+			"type": "string"
 		},
 		{
 			"key": "baseUrl",
 			"value": "http://localhost:3005",
-			"type": "string"
+			"type": "string",
+			"disabled": true
 		}
 	]
 }

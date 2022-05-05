@@ -1,7 +1,11 @@
 const express = require('express')
 const router = express.Router()
 const errorHelper = require('../utils/errorHelper')
-
+const { ImgurClient } = require('imgur')
+const client = new ImgurClient({
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+})
 const Post = require('../models/post')
 
 router.get('/', async (req, res) => {
@@ -125,6 +129,18 @@ router.patch('/:id', async (req, res) => {
   } catch (error) {
     errorHelper(res, '欄位未填寫正確', error)
   }
+})
+
+router.post('/upload', async (req, res) => {
+  const data = req.body
+  const response = await client.upload({
+    image: data.file,
+    type: 'base64',
+  })
+  res.status(200).json({
+    status: 'success',
+    data: response,
+  })
 })
 
 module.exports = router
