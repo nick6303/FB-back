@@ -1,27 +1,25 @@
 const express = require('express')
 const router = express.Router()
-const errorHelper = require('../utils/errorHelper')
+const appError = require('../utils/appError')
+const handelErrorAsync = require('../utils/handelErrorAsync')
 
 const User = require('../models/user')
 
-router.get('/', async (req, res) => {
-  try {
+router.get(
+  '/',
+  handelErrorAsync(async (req, res, next) => {
     const users = await User.find()
     res.status(200).json({
       status: 'success',
       data: users,
     })
-  } catch (error) {
-    res.status(400).json({
-      status: 'success',
-      error,
-    })
-  }
-})
+  })
+)
 
-router.get('/:id', async (req, res) => {
-  const id = req.params.id
-  try {
+router.get(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
     const user = await User.findById(id, { email: 0 })
     if (user) {
       res.status(200).json({
@@ -29,48 +27,61 @@ router.get('/:id', async (req, res) => {
         data: user,
       })
     } else {
-      errorHelper(res, '查無此ID')
+      appError(400, '查無此ID', next)
     }
-  } catch (error) {
-    errorHelper(res, '', error)
-  }
-})
+  })
+)
 
-router.post('/', async (req, res) => {
-  const data = req.body
-  const params = {
-    name: data.name,
-    email: data.email,
-  }
-  if (data.photo) {
-    params.photo = data.photo
-  }
-  try {
+router.post(
+  '/',
+  handelErrorAsync(async (req, res, next) => {
+    const data = req.body
+    const params = {}
+    const keys = ['name', 'email']
+    const errors = []
+    keys.forEach((key) => {
+      if (data[key]) {
+        params[key] = data[key]
+      } else {
+        errors.push(key)
+      }
+    })
+
+    if (errors.length > 0) {
+      appError(400, `${errors.join('、')}未填寫`, next)
+    }
+
+    const matches = await User.find({ email: data.email })
+    if (matches.length > 0) {
+      appError(400, 'email已使用', next)
+    }
+
+    if (data.photo) {
+      params.photo = data.photo
+    }
     const newUser = await User.create(params)
     res.status(200).json({
       status: 'success',
       data: newUser,
     })
-  } catch (error) {
-    errorHelper(res, '欄位未填寫正確', error)
-  }
-})
+  })
+)
 
-router.delete('/', async (req, res) => {
-  try {
+router.delete(
+  '/',
+  handelErrorAsync(async (req, res, next) => {
     await User.deleteMany({})
     res.status(200).json({
       status: 'success',
       message: '全部刪除成功',
     })
-  } catch (error) {
-    errorHelper(res, '全部刪除失敗', error)
-  }
-})
+  })
+)
 
-router.delete('/:id', async (req, res) => {
-  const id = req.params.id
-  try {
+router.delete(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
     const test = await User.findByIdAndDelete(id)
     if (test) {
       res.status(200).json({
@@ -78,28 +89,24 @@ router.delete('/:id', async (req, res) => {
         message: '刪除單筆成功',
       })
     } else {
-      errorHelper(res, '查無此IP')
+      appError(400, '查無此IP', next)
     }
-  } catch (error) {
-    errorHelper(res, '', error)
-  }
-})
+  })
+)
 
-router.patch('/:id', async (req, res) => {
-  const id = req.params.id
-  const data = req.body
-  const params = {}
-  if (data.name !== undefined) {
-    params.name = data.name
-  }
-  if (data.email !== undefined) {
-    params.email = data.email
-  }
-  if (data.photo !== undefined) {
-    params.photo = data.photo
-  }
+router.patch(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
+    const data = req.body
+    const params = {}
+    const keys = ['name', 'email', 'photo']
+    keys.forEach((key) => {
+      if (data[key] !== undefined) {
+        params[key] = data[key]
+      }
+    })
 
-  try {
     const user = await User.findByIdAndUpdate(id, { $set: params })
     if (user) {
       Object.assign(user, data)
@@ -108,11 +115,9 @@ router.patch('/:id', async (req, res) => {
         data: user,
       })
     } else {
-      errorHelper(res, '或查無此ID')
+      appError(400, '查無此IP', next)
     }
-  } catch (error) {
-    errorHelper(res, '欄位未填寫正確', error)
-  }
-})
+  })
+)
 
 module.exports = router

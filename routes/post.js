@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const errorHelper = require('../utils/errorHelper')
+const appError = require('../utils/appError')
+const handelErrorAsync = require('../utils/handelErrorAsync')
 const { ImgurClient } = require('imgur')
 const client = new ImgurClient({
   clientId: process.env.CLIENT_ID,
@@ -8,11 +9,12 @@ const client = new ImgurClient({
 })
 const Post = require('../models/post')
 
-router.get('/', async (req, res) => {
-  const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
-  const q =
-    req.query.q !== undefined ? { content: new RegExp(req.query.q) } : {}
-  try {
+router.get(
+  '/',
+  handelErrorAsync(async (req, res, next) => {
+    const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
+    const q =
+      req.query.q !== undefined ? { content: new RegExp(req.query.q) } : {}
     const posts = await Post.find(q)
       .populate({
         path: 'user',
@@ -23,17 +25,13 @@ router.get('/', async (req, res) => {
       status: 'success',
       data: posts,
     })
-  } catch (error) {
-    res.status(400).json({
-      status: 'success',
-      error,
-    })
-  }
-})
+  })
+)
 
-router.get('/:id', async (req, res) => {
-  const id = req.params.id
-  try {
+router.get(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
     const post = await Post.findById(id).populate({
       path: 'user',
       select: 'name photo',
@@ -44,51 +42,58 @@ router.get('/:id', async (req, res) => {
         data: post,
       })
     } else {
-      errorHelper(res, '查無此ID')
+      appError(400, '查無此IP', next)
     }
-  } catch (error) {
-    errorHelper(res, '', error)
-  }
-})
+  })
+)
 
-router.post('/', async (req, res) => {
-  const data = req.body
-  if (data.content === '' || data.content === undefined) {
-    errorHelper(res, '內容未填寫')
-  }
-  const params = {
-    user: data.user,
-    content: data.content,
-  }
-  if (data.image !== undefined) {
-    params.image = data.image
-  }
-  try {
+router.post(
+  '/',
+  handelErrorAsync(async (req, res, next) => {
+    const data = req.body
+    const keys = ['user', 'content']
+    const errors = []
+    const params = {}
+    keys.forEach((key) => {
+      if (data[key]) {
+        params[key] = data[key]
+      } else {
+        errors.push(key)
+      }
+    })
+
+    const message = errors.join('、')
+
+    if (errors.length > 0) {
+      appError(400, `${message}未填寫`, next)
+    }
+
+    if (data.image) {
+      params.image = data.image
+    }
     const newPost = await Post.create(params)
     res.status(200).json({
       status: 'success',
       data: newPost,
     })
-  } catch (error) {
-    errorHelper(res, '欄位未填寫正確', error)
-  }
-})
+  })
+)
 
-router.delete('/', async (req, res) => {
-  try {
+router.delete(
+  '/',
+  handelErrorAsync(async (req, res, next) => {
     await Post.deleteMany({})
     res.status(200).json({
       status: 'success',
       message: '全部刪除成功',
     })
-  } catch (error) {
-    errorHelper(res, '全部刪除失敗', error)
-  }
-})
+  })
+)
 
-router.delete('/:id', async (req, res) => {
-  const id = req.params.id
-  try {
+router.delete(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
     const test = await Post.findByIdAndDelete(id)
     if (test) {
       res.status(200).json({
@@ -96,26 +101,28 @@ router.delete('/:id', async (req, res) => {
         message: '刪除單筆成功',
       })
     } else {
-      errorHelper(res, '查無此IP')
+      appError(400, '查無此IP', next)
     }
-  } catch (error) {
-    errorHelper(res, '', error)
-  }
-})
+  })
+)
 
-router.patch('/:id', async (req, res) => {
-  const id = req.params.id
-  const data = req.body
-  const params = {
-    content: data.content,
-  }
-  if (data.image !== undefined) {
-    params.image = data.image
-  }
-  if (data.likes !== undefined) {
-    params.likes = data.likes
-  }
-  try {
+router.patch(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
+    const data = req.body
+    if (!data.content) {
+      appError(400, '內容未填寫', next)
+    }
+    const params = {
+      content: data.content,
+    }
+    if (data.image !== undefined) {
+      params.image = data.image
+    }
+    if (data.likes !== undefined) {
+      params.likes = data.likes
+    }
     const post = await Post.findByIdAndUpdate(id, { $set: params })
     if (post) {
       Object.assign(post, data)
@@ -124,23 +131,24 @@ router.patch('/:id', async (req, res) => {
         data: post,
       })
     } else {
-      errorHelper(res, '或查無此ID')
+      appError(400, '查無此IP', next)
     }
-  } catch (error) {
-    errorHelper(res, '欄位未填寫正確', error)
-  }
-})
+  })
+)
 
-router.post('/upload', async (req, res) => {
-  const data = req.body
-  const response = await client.upload({
-    image: data.file,
-    type: 'base64',
+router.post(
+  '/upload',
+  handelErrorAsync(async (req, res) => {
+    const data = req.body
+    const response = await client.upload({
+      image: data.file,
+      type: 'base64',
+    })
+    res.status(200).json({
+      status: 'success',
+      data: response,
+    })
   })
-  res.status(200).json({
-    status: 'success',
-    data: response,
-  })
-})
+)
 
 module.exports = router
