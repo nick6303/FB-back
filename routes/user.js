@@ -27,7 +27,7 @@ router.get(
         data: user,
       })
     } else {
-      appError(400, '查無此ID', next)
+      return next(appError(400, '查無此ID', next))
     }
   })
 )
@@ -48,12 +48,12 @@ router.post(
     })
 
     if (errors.length > 0) {
-      appError(400, `${errors.join('、')}未填寫`, next)
+      return next(appError(400, `${errors.join('、')}未填寫`, next))
     }
 
     const matches = await User.find({ email: data.email })
     if (matches.length > 0) {
-      appError(400, 'email已使用', next)
+      return next(appError(400, 'email已使用', next))
     }
 
     if (data.photo) {
@@ -89,7 +89,7 @@ router.delete(
         message: '刪除單筆成功',
       })
     } else {
-      appError(400, '查無此IP', next)
+      return next(appError(400, '查無此IP', next))
     }
   })
 )
@@ -115,7 +115,7 @@ router.patch(
         data: user,
       })
     } else {
-      appError(400, '查無此IP', next)
+      return next(appError(400, '查無此IP', next))
     }
   })
 )

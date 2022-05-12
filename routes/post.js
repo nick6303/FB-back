@@ -42,7 +42,7 @@ router.get(
         data: post,
       })
     } else {
-      appError(400, '查無此IP', next)
+      return next(appError(400, '查無此IP', next))
     }
   })
 )
@@ -65,7 +65,7 @@ router.post(
     const message = errors.join('、')
 
     if (errors.length > 0) {
-      appError(400, `${message}未填寫`, next)
+      return next(appError(400, `${message}未填寫`, next))
     }
 
     if (data.image) {
@@ -101,7 +101,7 @@ router.delete(
         message: '刪除單筆成功',
       })
     } else {
-      appError(400, '查無此IP', next)
+      return next(appError(400, '查無此IP', next))
     }
   })
 )
@@ -112,7 +112,7 @@ router.patch(
     const id = req.params.id
     const data = req.body
     if (!data.content) {
-      appError(400, '內容未填寫', next)
+      return next(appError(400, '內容未填寫', next))
     }
     const params = {
       content: data.content,
@@ -131,7 +131,7 @@ router.patch(
         data: post,
       })
     } else {
-      appError(400, '查無此IP', next)
+      return next(appError(400, '查無此IP', next))
     }
   })
 )
