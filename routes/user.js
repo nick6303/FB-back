@@ -120,4 +120,29 @@ router.patch(
   })
 )
 
+router.post(
+  '/sign_up',
+  handelErrorAsync(async (req, res, next) => {})
+)
+
+router.post(
+  '/sign_in',
+  handelErrorAsync(async (req, res, next) => {})
+)
+
+router.post(
+  '/updatePassword',
+  handelErrorAsync(async (req, res, next) => {})
+)
+
+router.get(
+  '/profile',
+  handelErrorAsync(async (req, res, next) => {})
+)
+
+router.patch(
+  '/profile',
+  handelErrorAsync(async (req, res, next) => {})
+)
+
 module.exports = router
