@@ -80,7 +80,7 @@ router.post(
 )
 
 router.delete(
-  '/',
+  '/all',
   handelErrorAsync(async (req, res, next) => {
     await Post.deleteMany({})
     res.status(200).json({
@@ -123,7 +123,11 @@ router.patch(
     if (data.likes !== undefined) {
       params.likes = data.likes
     }
-    const post = await Post.findByIdAndUpdate(id, { $set: params })
+    const post = await Post.findByIdAndUpdate(
+      id,
+      { $set: params },
+      { runValidators: true }
+    )
     if (post) {
       Object.assign(post, data)
       res.status(200).json({

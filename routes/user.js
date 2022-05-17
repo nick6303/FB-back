@@ -68,7 +68,7 @@ router.post(
 )
 
 router.delete(
-  '/',
+  '/all',
   handelErrorAsync(async (req, res, next) => {
     await User.deleteMany({})
     res.status(200).json({

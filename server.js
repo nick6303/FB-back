@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const cors = require('cors')
 const express = require('express')
 const dotenv = require('dotenv')
 dotenv.config({ path: './config.env' })
@@ -21,17 +22,7 @@ process.on('uncaughtException', (err) => {
 
 const app = express()
 app.use(express.json())
-
-app.all('*', function (req, res, next) {
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Content-Type, Authorization, Content-Length, X-Requested-With'
-  )
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Methods', 'PATCH, POST, GET,OPTIONS,DELETE')
-  res.header('Content-Type', 'application/json')
-  next()
-})
+app.use(cors())
 
 app.use('/post', postRouter)
 app.use('/user', userRouter)
