@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    password: {
+      type: String,
+      required: [true, '請輸入密碼'],
+      select: false,
+    },
   },
   {
     versionKey: false,

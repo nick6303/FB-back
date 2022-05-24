@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const appError = require('../utils/appError')
 const handelErrorAsync = require('../utils/handelErrorAsync')
+const { isAuth } = require('../utils/auth')
+
 const { ImgurClient } = require('imgur')
 const client = new ImgurClient({
   clientId: process.env.CLIENT_ID,
@@ -11,6 +13,7 @@ const Post = require('../models/post')
 
 router.get(
   '/',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
     const q =
@@ -49,23 +52,17 @@ router.get(
 
 router.post(
   '/',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
+    const user = req.user
     const data = req.body
-    const keys = ['user', 'content']
-    const errors = []
-    const params = {}
-    keys.forEach((key) => {
-      if (data[key]) {
-        params[key] = data[key]
-      } else {
-        errors.push(key)
-      }
-    })
-
-    const message = errors.join('、')
-
-    if (errors.length > 0) {
-      return next(appError(400, `${message}未填寫`, next))
+    const { content } = data
+    if (!content) {
+      return next(appError(400, '內容未填寫', next))
+    }
+    const params = {
+      user: user._id,
+      content,
     }
 
     if (data.image) {
@@ -108,6 +105,7 @@ router.delete(
 
 router.patch(
   '/:id',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     const id = req.params.id
     const data = req.body
@@ -135,7 +133,7 @@ router.patch(
         data: post,
       })
     } else {
-      return next(appError(400, '查無此IP', next))
+      return next(appError(400, '查無此文章', next))
     }
   })
 )

@@ -2,11 +2,160 @@ const express = require('express')
 const router = express.Router()
 const appError = require('../utils/appError')
 const handelErrorAsync = require('../utils/handelErrorAsync')
-
+const validator = require('validator')
+const bcrypt = require('bcryptjs')
 const User = require('../models/user')
+const { isAuth, generateSendJwt } = require('../utils/auth')
+
+router.post(
+  '/sign_up',
+  handelErrorAsync(async (req, res, next) => {
+    const data = req.body
+    const { name, photo, email, password, password2 } = data
+    const keys = ['name', 'email', 'password', 'password2']
+    const errors = []
+    keys.forEach((key) => {
+      if (!data[key]) {
+        errors.push(key)
+      }
+    })
+
+    if (errors.length > 0) {
+      return next(appError(400, `${errors.join('、')}未填寫`, next))
+    }
+
+    if (password !== password2) {
+      return next(appError(400, `密碼不相同`, next))
+    }
+    if (!validator.isLength(password, { min: 8 })) {
+      return next(appError(400, `密碼不滿8個字`, next))
+    }
+    if (!validator.isEmail(email)) {
+      return next(appError(400, `email格式不正確`, next))
+    }
+
+    const matches = await User.find({ email: data.email })
+    if (matches.length > 0) {
+      return next(appError(400, 'email已使用', next))
+    }
+    const bcryptPassword = await bcrypt.hash(password, 12)
+    const newUser = await User.create({
+      name,
+      email,
+      photo,
+      password: bcryptPassword,
+    })
+
+    res.status(200).json({
+      status: 'success',
+      data: newUser,
+    })
+  })
+)
+
+router.post(
+  '/sign_in',
+  handelErrorAsync(async (req, res, next) => {
+    const data = req.body
+
+    const { email, password } = data
+
+    const user = await User.findOne({ email }).select('+password')
+
+    if (!user) {
+      return next(appError(403, '無此使用者', next))
+    }
+    const auth = await bcrypt.compare(password, user.password)
+
+    if (!auth) {
+      return next(appError(403, '密碼錯誤', next))
+    }
+
+    generateSendJwt(user, res, 200)
+  })
+)
+
+router.get(
+  '/profile',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.user.id
+    const user = await User.findById(id).select('+email')
+    res.status(200).json({
+      status: 'success',
+      data: user,
+    })
+  })
+)
+
+router.patch(
+  '/profile',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.user.id
+    const data = req.body
+    const params = {}
+    const keys = ['name', 'email', 'photo']
+    keys.forEach((key) => {
+      if (data[key] !== undefined) {
+        params[key] = data[key]
+      }
+    })
+
+    const user = await User.findByIdAndUpdate(id, { $set: params })
+    if (user) {
+      Object.assign(user, data)
+      res.status(200).json({
+        status: 'success',
+        data: user,
+      })
+    }
+  })
+)
+
+router.post(
+  '/updatePassword',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.user.id
+    const data = req.body
+    const { password, password2 } = data
+    const keys = ['password', 'password2']
+    const errors = []
+    keys.forEach((key) => {
+      if (!data[key]) {
+        errors.push(key)
+      }
+    })
+
+    if (errors.length > 0) {
+      return next(appError(400, `${errors.join('、')}未填寫`, next))
+    }
+
+    if (password !== password2) {
+      return next(appError(400, `密碼不相同`, next))
+    }
+    if (!validator.isLength(password, { min: 8 })) {
+      return next(appError(400, `密碼不滿8個字`, next))
+    }
+
+    const newPassword = await bcrypt.hash(password, 12)
+
+    const user = await User.findByIdAndUpdate(id, {
+      $set: { password: newPassword },
+    })
+
+    res.status(200).json({
+      status: 'success',
+      message: '密碼更改成功',
+      data: user,
+    })
+  })
+)
 
 router.get(
   '/',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     const users = await User.find()
     res.status(200).json({
@@ -18,6 +167,23 @@ router.get(
 
 router.get(
   '/:id',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
+    const user = await User.findById(id, { email: 0 })
+    if (user) {
+      res.status(200).json({
+        status: 'success',
+        data: user,
+      })
+    } else {
+      return next(appError(400, '查無此ID', next))
+    }
+  })
+)
+router.get(
+  '/:id',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     const id = req.params.id
     const user = await User.findById(id, { email: 0 })
@@ -34,6 +200,7 @@ router.get(
 
 router.post(
   '/',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     const data = req.body
     const params = {}
@@ -69,6 +236,7 @@ router.post(
 
 router.delete(
   '/all',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     await User.deleteMany({})
     res.status(200).json({
@@ -80,6 +248,7 @@ router.delete(
 
 router.delete(
   '/:id',
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     const id = req.params.id
     const test = await User.findByIdAndDelete(id)
@@ -92,57 +261,6 @@ router.delete(
       return next(appError(400, '查無此IP', next))
     }
   })
-)
-
-router.patch(
-  '/:id',
-  handelErrorAsync(async (req, res, next) => {
-    const id = req.params.id
-    const data = req.body
-    const params = {}
-    const keys = ['name', 'email', 'photo']
-    keys.forEach((key) => {
-      if (data[key] !== undefined) {
-        params[key] = data[key]
-      }
-    })
-
-    const user = await User.findByIdAndUpdate(id, { $set: params })
-    if (user) {
-      Object.assign(user, data)
-      res.status(200).json({
-        status: 'success',
-        data: user,
-      })
-    } else {
-      return next(appError(400, '查無此IP', next))
-    }
-  })
-)
-
-router.post(
-  '/sign_up',
-  handelErrorAsync(async (req, res, next) => {})
-)
-
-router.post(
-  '/sign_in',
-  handelErrorAsync(async (req, res, next) => {})
-)
-
-router.post(
-  '/updatePassword',
-  handelErrorAsync(async (req, res, next) => {})
-)
-
-router.get(
-  '/profile',
-  handelErrorAsync(async (req, res, next) => {})
-)
-
-router.patch(
-  '/profile',
-  handelErrorAsync(async (req, res, next) => {})
 )
 
 module.exports = router
