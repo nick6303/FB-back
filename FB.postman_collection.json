@@ -554,17 +554,17 @@
 		{
 			"key": "baseUrl",
 			"value": "https://cryptic-citadel-29110.herokuapp.com",
-			"type": "string",
-			"disabled": true
+			"type": "string"
 		},
 		{
 			"key": "baseUrl",
 			"value": "http://localhost:3005",
-			"type": "string"
+			"type": "string",
+			"disabled": true
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODY0YjcxZjdhNDljYjVlMGQ0NWNhZSIsImlhdCI6MTY1MzM5NTY0NiwiZXhwIjoxNjYxMTcxNjQ2fQ.ep7IWJcBLwCiHPMTQhic1XZ204Dkzso-5lZdjtNO7QM",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODY0YjcxZjdhNDljYjVlMGQ0NWNhZSIsImlhdCI6MTY1MzM5NjY3NSwiZXhwIjoxNjYxMTcyNjc1fQ.6Q8R8zbNkqtuWLXqGYW7wIAzEA3phZnj1_j1ndIW_bE",
 			"type": "string"
 		}
 	]
