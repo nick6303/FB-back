@@ -165,39 +165,6 @@ router.get(
   })
 )
 
-router.get(
-  '/:id',
-  isAuth,
-  handelErrorAsync(async (req, res, next) => {
-    const id = req.params.id
-    const user = await User.findById(id, { email: 0 })
-    if (user) {
-      res.status(200).json({
-        status: 'success',
-        data: user,
-      })
-    } else {
-      return next(appError(400, '查無此ID', next))
-    }
-  })
-)
-router.get(
-  '/:id',
-  isAuth,
-  handelErrorAsync(async (req, res, next) => {
-    const id = req.params.id
-    const user = await User.findById(id, { email: 0 })
-    if (user) {
-      res.status(200).json({
-        status: 'success',
-        data: user,
-      })
-    } else {
-      return next(appError(400, '查無此ID', next))
-    }
-  })
-)
-
 router.post(
   '/',
   isAuth,
@@ -243,6 +210,23 @@ router.delete(
       status: 'success',
       message: '全部刪除成功',
     })
+  })
+)
+
+router.get(
+  '/:id',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
+    const user = await User.findById(id, { email: 0 })
+    if (user) {
+      res.status(200).json({
+        status: 'success',
+        data: user,
+      })
+    } else {
+      return next(appError(400, '查無此ID', next))
+    }
   })
 )
 
