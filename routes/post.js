@@ -26,25 +26,6 @@ router.get(
   })
 )
 
-router.get(
-  '/:id',
-  handelErrorAsync(async (req, res, next) => {
-    const id = req.params.id
-    const post = await Post.findById(id).populate({
-      path: 'user',
-      select: 'name photo',
-    })
-    if (post) {
-      res.status(200).json({
-        status: 'success',
-        data: post,
-      })
-    } else {
-      return next(appError(400, '查無此IP', next))
-    }
-  })
-)
-
 router.post(
   '/',
   isAuth,
@@ -79,6 +60,25 @@ router.delete(
       status: 'success',
       message: '全部刪除成功',
     })
+  })
+)
+
+router.get(
+  '/:id',
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
+    const post = await Post.findById(id).populate({
+      path: 'user',
+      select: 'name photo',
+    })
+    if (post) {
+      res.status(200).json({
+        status: 'success',
+        data: post,
+      })
+    } else {
+      return next(appError(400, '查無此IP', next))
+    }
   })
 )
 
