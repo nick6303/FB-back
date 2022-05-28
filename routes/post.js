@@ -5,6 +5,7 @@ const handelErrorAsync = require('../utils/handelErrorAsync')
 const { isAuth } = require('../utils/auth')
 
 const Post = require('../models/post')
+const Comment = require('../models/comment')
 
 router.get(
   '/',
@@ -17,6 +18,10 @@ router.get(
       .populate({
         path: 'user',
         select: 'name photo',
+      })
+      .populate({
+        path: 'comments',
+        select: 'content user',
       })
       .sort(timeSort)
     res.status(200).json({
@@ -137,19 +142,16 @@ router.post(
   '/:id/likes',
   isAuth,
   handelErrorAsync(async (req, res, next) => {
-    const _id = req.params.id
-    await Post.findByIdAndUpdate(
-      { _id },
-      {
-        $addToSet: {
-          likes: req.user.id,
-        },
-      }
-    )
+    const id = req.params.id
+    await Post.findByIdAndUpdate(id, {
+      $addToSet: {
+        likes: req.user.id,
+      },
+    })
 
     res.status(200).json({
       status: 'success',
-      postId: _id,
+      postId: id,
       userId: req.user.id,
     })
   })
@@ -159,20 +161,38 @@ router.delete(
   '/:id/likes',
   isAuth,
   handelErrorAsync(async (req, res, next) => {
-    const _id = req.params.id
-    await Post.findByIdAndUpdate(
-      { _id },
-      {
-        $pull: {
-          likes: req.user.id,
-        },
-      }
-    )
+    const id = req.params.id
+    await Post.findByIdAndUpdate(id, {
+      $pull: {
+        likes: req.user.id,
+      },
+    })
 
     res.status(200).json({
       status: 'success',
-      postId: _id,
+      postId: id,
       userId: req.user.id,
+    })
+  })
+)
+
+router.post(
+  '/:id/comments',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const postid = req.params.id
+    const data = req.body
+    const { content } = data
+
+    const newComment = await Comment.create({
+      post: postid,
+      user: req.user.id,
+      content,
+    })
+
+    res.status(200).json({
+      status: 'success',
+      data: newComment,
     })
   })
 )

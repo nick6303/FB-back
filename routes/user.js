@@ -263,4 +263,79 @@ router.delete(
   })
 )
 
+router.post(
+  '/:id/follow',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const targetId = req.params.id
+    const userId = req.user.id
+
+    if (targetId === userId) {
+      return next(appError(400, '不可追蹤自己', next))
+    }
+
+    await User.findByIdAndUpdate(userId, {
+      $addToSet: {
+        following: targetId,
+      },
+    })
+
+    await User.findByIdAndUpdate(targetId, {
+      $addToSet: {
+        followed: userId,
+      },
+    })
+
+    res.status(200).json({
+      status: 'success',
+      message: '追蹤成功',
+    })
+  })
+)
+
+router.delete(
+  '/:id/follow',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const targetId = req.params.id
+    const userId = req.user.id
+    await User.findByIdAndUpdate(userId, {
+      $pull: {
+        following: targetId,
+      },
+    })
+
+    await User.findByIdAndUpdate(targetId, {
+      $pull: {
+        followed: userId,
+      },
+    })
+
+    res.status(200).json({
+      status: 'success',
+      message: '取消追蹤',
+    })
+  })
+)
+
+router.get(
+  '/getLikeList',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const likeList = await Post.find({
+      likes: {
+        $in: [req.user.id],
+      },
+    }).populate({
+      path: 'user',
+      select: 'name photo',
+    })
+
+    res.status(200).join({
+      status: 'success',
+      data: likeList,
+    })
+  })
+)
+
 module.exports = router

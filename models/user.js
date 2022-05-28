@@ -21,6 +21,18 @@ const userSchema = new mongoose.Schema(
       required: [true, '請輸入密碼'],
       select: false,
     },
+    followed: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     versionKey: false,
