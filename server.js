@@ -25,8 +25,8 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
-app.use('/post', postRouter)
-app.use('/user', userRouter)
+app.use('/posts', postRouter)
+app.use('/users', userRouter)
 app.use('/upload', uploadRouter)
 app.use('/', indexRouter)
 
