@@ -87,6 +87,22 @@ router.delete(
   })
 )
 
+router.get(
+  '/user/:id',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.user.id
+    const postsList = await Post.find({
+      user: id,
+    })
+
+    res.status(200).json({
+      status: 'success',
+      data: postsList,
+    })
+  })
+)
+
 router.delete(
   '/:id',
   handelErrorAsync(async (req, res, next) => {
