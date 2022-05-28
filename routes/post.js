@@ -4,11 +4,6 @@ const appError = require('../utils/appError')
 const handelErrorAsync = require('../utils/handelErrorAsync')
 const { isAuth } = require('../utils/auth')
 
-const { ImgurClient } = require('imgur')
-const client = new ImgurClient({
-  clientId: process.env.CLIENT_ID,
-  clientSecret: process.env.CLIENT_SECRET,
-})
 const Post = require('../models/post')
 
 router.get(
@@ -139,16 +134,45 @@ router.patch(
 )
 
 router.post(
-  '/upload',
-  handelErrorAsync(async (req, res) => {
-    const data = req.body
-    const response = await client.upload({
-      image: data.file,
-      type: 'base64',
-    })
+  '/:id/likes',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const _id = req.params.id
+    await Post.findByIdAndUpdate(
+      { _id },
+      {
+        $addToSet: {
+          likes: req.user.id,
+        },
+      }
+    )
+
     res.status(200).json({
       status: 'success',
-      data: response,
+      postId: _id,
+      userId: req.user.id,
+    })
+  })
+)
+
+router.delete(
+  '/:id/likes',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const _id = req.params.id
+    await Post.findByIdAndUpdate(
+      { _id },
+      {
+        $pull: {
+          likes: req.user.id,
+        },
+      }
+    )
+
+    res.status(200).json({
+      status: 'success',
+      postId: _id,
+      userId: req.user.id,
     })
   })
 )

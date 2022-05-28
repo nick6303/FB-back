@@ -4,16 +4,17 @@ const postSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'user',
-      required: [true, '請輸入您的名字'],
     },
     content: {
       type: String,
       required: [true, '未輸入內容'],
     },
-    likes: {
-      type: Number,
-      default: 0,
-    },
+    likes: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
     image: {
       type: String,
       default: '',

@@ -11,6 +11,7 @@ const DATABASE = process.env.DATABASE.replace(
 const indexRouter = require('./routes/index')
 const postRouter = require('./routes/post')
 const userRouter = require('./routes/user')
+const uploadRouter = require('./routes/upload')
 
 // 程式出現重大錯誤時
 process.on('uncaughtException', (err) => {
@@ -26,6 +27,7 @@ app.use(cors())
 
 app.use('/post', postRouter)
 app.use('/user', userRouter)
+app.use('/upload', uploadRouter)
 app.use('/', indexRouter)
 
 app.use(function (req, res, next) {
