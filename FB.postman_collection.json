@@ -25,12 +25,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/post?timeSort=asc",
+							"raw": "{{baseUrl}}/posts?timeSort=asc",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post"
+								"posts"
 							],
 							"query": [
 								{
@@ -48,13 +48,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/post/6272923aca1f84aafe28b1ca",
+							"raw": "{{baseUrl}}/posts/6290d8833742db883c2afe5e",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post",
-								"6272923aca1f84aafe28b1ca"
+								"posts",
+								"6290d8833742db883c2afe5e"
 							]
 						}
 					},
@@ -85,12 +85,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/post",
+							"raw": "{{baseUrl}}/posts",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post"
+								"posts"
 							]
 						}
 					},
@@ -121,13 +121,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/post/627a68a30c8e8e2beff4e8bd",
+							"raw": "{{baseUrl}}/posts/6283cdc20d5549ef9bb7e33d",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post",
-								"627a68a30c8e8e2beff4e8bd"
+								"posts",
+								"6283cdc20d5549ef9bb7e33d"
 							]
 						}
 					},
@@ -139,12 +139,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/post",
+							"raw": "{{baseUrl}}/posts/all",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post"
+								"posts",
+								"all"
 							]
 						}
 					},
@@ -156,12 +157,12 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/post/626e405836dc947768296a66",
+							"raw": "{{baseUrl}}/posts/626e405836dc947768296a66",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post",
+								"posts",
 								"626e405836dc947768296a66"
 							]
 						}
@@ -169,27 +170,58 @@
 					"response": []
 				},
 				{
-					"name": "上傳圖片",
+					"name": "新增like",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"file\": \r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "{{baseUrl}}/post/upload",
+							"raw": "{{baseUrl}}/posts/6290d8833742db883c2afe5e/likes",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"post",
-								"upload"
+								"posts",
+								"6290d8833742db883c2afe5e",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除like",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/posts/6290d8833742db883c2afe5e/likes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"posts",
+								"6290d8833742db883c2afe5e",
+								"likes"
 							]
 						}
 					},
@@ -201,13 +233,78 @@
 			"name": "user",
 			"item": [
 				{
-					"name": "註冊",
+					"name": "取得所有user",
 					"request": {
-						"method": "POST",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "取得單筆user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/627a699aa6c6c8d26e8b51b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"627a699aa6c6c8d26e8b51b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "編輯單筆user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"mike\",\r\n    \"email\": \"mike@gmail.com\",\r\n    \"password\": \"1234567890\",\r\n    \"password2\": \"1234567890\"\r\n}",
+							"raw": "{\r\n    \"name\": \"mike\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -215,12 +312,143 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/sign_up",
+							"raw": "{{baseUrl}}/users/627a699aa6c6c8d26e8b51b",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"user",
+								"users",
+								"627a699aa6c6c8d26e8b51b"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除所有user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/all",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "刪除單筆user",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/627a699aa6c6c8d26e8b51b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"627a699aa6c6c8d26e8b51b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "upload",
+			"item": [
+				{
+					"name": "上傳圖片",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "",
+									"type": "file",
+									"src": "/C:/Users/nick/Desktop/新增資料夾/下載 (1).png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/upload/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"upload",
+								"image"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "註冊",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"nick\",\r\n    \"email\": \"nick@gmail.com\",\r\n    \"password\": \"1234567890\",\r\n    \"password2\": \"1234567890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/sign_up",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
 								"sign_up"
 							]
 						}
@@ -242,12 +470,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/sign_in",
+							"raw": "{{baseUrl}}/users/sign_in",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"sign_in"
 							]
 						}
@@ -293,12 +521,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/profile",
+							"raw": "{{baseUrl}}/users/profile",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"profile"
 							]
 						}
@@ -322,7 +550,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"nick\",\r\n    \"photo\": \"data:image/jpeg;base64,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\"\r\n}",
+							"raw": "{\r\n    \"name\": \"mike\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -330,12 +558,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/profile",
+							"raw": "{{baseUrl}}/users/profile",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"profile"
 							]
 						}
@@ -367,161 +595,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/updatePassword",
+							"raw": "{{baseUrl}}/users/updatePassword",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"user",
+								"users",
 								"updatePassword"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "取得所有user",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/user",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "取得單筆user",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/user/627a699aa6c6c8d26e8b51b",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"627a699aa6c6c8d26e8b51b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "編輯單筆user",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"mike\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/user/627a699aa6c6c8d26e8b51b",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"627a699aa6c6c8d26e8b51b"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "刪除所有user",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/user/all",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"all"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "刪除單筆user",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/user/627a699aa6c6c8d26e8b51b",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"627a699aa6c6c8d26e8b51b"
 							]
 						}
 					},
@@ -564,7 +644,7 @@
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODY0YjcxZjdhNDljYjVlMGQ0NWNhZSIsImlhdCI6MTY1MzM5NjY3NSwiZXhwIjoxNjYxMTcyNjc1fQ.6Q8R8zbNkqtuWLXqGYW7wIAzEA3phZnj1_j1ndIW_bE",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODY0YjcxZjdhNDljYjVlMGQ0NWNhZSIsImlhdCI6MTY1MzY1OTAzMSwiZXhwIjoxNjYxNDM1MDMxfQ.yx82qY2QCFhwYvgdI1kw4QwWPkbjJNLrX2sRQVpYPVM",
 			"type": "string"
 		}
 	]
