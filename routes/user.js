@@ -5,6 +5,7 @@ const handelErrorAsync = require('../utils/handelErrorAsync')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const User = require('../models/user')
+const Post = require('../models/post')
 const { isAuth, generateSendJwt } = require('../utils/auth')
 
 router.post(
@@ -166,35 +167,19 @@ router.get(
 )
 
 router.get(
-  '/:id',
+  '/getLikeList',
   isAuth,
   handelErrorAsync(async (req, res, next) => {
-    const id = req.params.id
-    const user = await User.findById(id, { email: 0 })
-    if (user) {
-      res.status(200).json({
-        status: 'success',
-        data: user,
-      })
-    } else {
-      return next(appError(400, '查無此ID', next))
-    }
-  })
-)
-router.get(
-  '/:id',
-  isAuth,
-  handelErrorAsync(async (req, res, next) => {
-    const id = req.params.id
-    const user = await User.findById(id, { email: 0 })
-    if (user) {
-      res.status(200).json({
-        status: 'success',
-        data: user,
-      })
-    } else {
-      return next(appError(400, '查無此ID', next))
-    }
+    const likeList = await Post.find({
+      likes: { $in: [req.user.id] },
+    }).populate({
+      path: 'user',
+      select: 'name',
+    })
+    res.status(200).json({
+      status: 'success',
+      likeList,
+    })
   })
 )
 
@@ -243,6 +228,23 @@ router.delete(
       status: 'success',
       message: '全部刪除成功',
     })
+  })
+)
+
+router.get(
+  '/:id',
+  isAuth,
+  handelErrorAsync(async (req, res, next) => {
+    const id = req.params.id
+    const user = await User.findById(id, { email: 0 })
+    if (user) {
+      res.status(200).json({
+        status: 'success',
+        data: user,
+      })
+    } else {
+      return next(appError(400, '查無此ID', next))
+    }
   })
 )
 
@@ -314,26 +316,6 @@ router.delete(
     res.status(200).json({
       status: 'success',
       message: '取消追蹤',
-    })
-  })
-)
-
-router.get(
-  '/getLikeList',
-  isAuth,
-  handelErrorAsync(async (req, res, next) => {
-    const likeList = await Post.find({
-      likes: {
-        $in: [req.user.id],
-      },
-    }).populate({
-      path: 'user',
-      select: 'name photo',
-    })
-
-    res.status(200).join({
-      status: 'success',
-      data: likeList,
     })
   })
 )
