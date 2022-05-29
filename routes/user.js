@@ -148,8 +148,9 @@ router.post(
 
     res.status(200).json({
       status: 'success',
-      message: '密碼更改成功',
-      data: user,
+      data: {
+        user,
+      },
     })
   })
 )
@@ -178,7 +179,9 @@ router.get(
     })
     res.status(200).json({
       status: 'success',
-      likeList,
+      data: {
+        likeList,
+      },
     })
   })
 )

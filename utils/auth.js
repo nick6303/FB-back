@@ -44,8 +44,8 @@ const generateSendJwt = (user, res, statusCode) => {
 
   res.status(statusCode).json({
     status: 'success',
-    user: {
-      name: user.name,
+    data: {
+      user: { name: user.name },
       token: jwtToken,
     },
   })
