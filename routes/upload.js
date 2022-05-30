@@ -30,7 +30,9 @@ router.post(
     if (response.data.link) {
       res.status(200).json({
         status: 'success',
-        imgUrl: response.data.link,
+        data: {
+          imgUrl: response.data.link,
+        },
       })
     } else {
       return next(appError(400, '上傳失敗', next))
