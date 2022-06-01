@@ -279,17 +279,23 @@ router.post(
       return next(appError(400, '不可追蹤自己', next))
     }
 
-    const newUser = await User.findByIdAndUpdate(userId, {
-      $addToSet: {
-        following: { user: targetId },
-      },
-    })
+    const newUser = await User.updateOne(
+      { _id: userId, 'following.user': { $ne: targetId } },
+      {
+        $addToSet: {
+          following: { user: targetId },
+        },
+      }
+    )
 
-    await User.findByIdAndUpdate(targetId, {
-      $addToSet: {
-        followers: { user: userId },
-      },
-    })
+    await User.findByIdAndUpdate(
+      { _id: targetId, 'followers.user': { $ne: userId } },
+      {
+        $addToSet: {
+          followers: { user: userId },
+        },
+      }
+    )
 
     res.status(200).json({
       status: 'success',
