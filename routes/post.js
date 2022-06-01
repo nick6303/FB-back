@@ -35,10 +35,15 @@ router.get(
   '/:id',
   handelErrorAsync(async (req, res, next) => {
     const id = req.params.id
-    const post = await Post.findById(id).populate({
-      path: 'user',
-      select: 'name photo',
-    })
+    const post = await Post.findById(id)
+      .populate({
+        path: 'user',
+        select: 'name photo',
+      })
+      .populate({
+        path: 'comments',
+        select: 'content user',
+      })
     if (post) {
       res.status(200).json({
         status: 'success',
@@ -91,10 +96,24 @@ router.get(
   '/user/:id',
   isAuth,
   handelErrorAsync(async (req, res, next) => {
+    const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
+    const q =
+      req.query.q !== undefined ? { content: new RegExp(req.query.q) } : {}
     const id = req.user.id
+
     const postsList = await Post.find({
       user: id,
+      q,
     })
+      .populate({
+        path: 'user',
+        select: 'name photo',
+      })
+      .populate({
+        path: 'comments',
+        select: 'content user',
+      })
+      .sort(timeSort)
 
     res.status(200).json({
       status: 'success',
