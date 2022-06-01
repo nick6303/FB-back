@@ -21,16 +21,22 @@ const userSchema = new mongoose.Schema(
       required: [true, '請輸入密碼'],
       select: false,
     },
-    followed: [
+    followers: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
+        user: { type: mongoose.Schema.ObjectId, ref: 'User' },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
     following: [
       {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
+        user: { type: mongoose.Schema.ObjectId, ref: 'User' },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
       },
     ],
   },

@@ -279,21 +279,24 @@ router.post(
       return next(appError(400, '不可追蹤自己', next))
     }
 
-    await User.findByIdAndUpdate(userId, {
+    const newUser = await User.findByIdAndUpdate(userId, {
       $addToSet: {
-        following: targetId,
+        following: { user: targetId },
       },
     })
 
     await User.findByIdAndUpdate(targetId, {
       $addToSet: {
-        followed: userId,
+        followers: { user: userId },
       },
     })
 
     res.status(200).json({
       status: 'success',
       message: '追蹤成功',
+      data: {
+        newUser,
+      },
     })
   })
 )
@@ -304,21 +307,24 @@ router.delete(
   handelErrorAsync(async (req, res, next) => {
     const targetId = req.params.id
     const userId = req.user.id
-    await User.findByIdAndUpdate(userId, {
+    const newUser = await User.findByIdAndUpdate(userId, {
       $pull: {
-        following: targetId,
+        following: { user: targetId },
       },
     })
 
     await User.findByIdAndUpdate(targetId, {
       $pull: {
-        followed: userId,
+        followers: { user: userId },
       },
     })
 
     res.status(200).json({
       status: 'success',
       message: '取消追蹤',
+      data: {
+        newUser,
+      },
     })
   })
 )

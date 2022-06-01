@@ -99,7 +99,7 @@ router.get(
     const timeSort = req.query.timeSort === 'asc' ? 'createdAt' : '-createdAt'
     const q =
       req.query.q !== undefined ? { content: new RegExp(req.query.q) } : {}
-    const id = req.user.id
+    const id = req.params.id
 
     const postsList = await Post.find({
       user: id,
