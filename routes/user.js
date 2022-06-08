@@ -175,7 +175,7 @@ router.get(
       likes: { $in: [req.user.id] },
     }).populate({
       path: 'user',
-      select: 'name',
+      select: 'name photo id',
     })
     res.status(200).json({
       status: 'success',
