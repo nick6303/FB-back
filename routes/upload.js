@@ -8,8 +8,8 @@ const { ImgurClient } = require('imgur')
 
 router.post(
   '/image',
-  isAuth,
   upload,
+  isAuth,
   handelErrorAsync(async (req, res, next) => {
     if (!req.files.length) {
       return next(appError(400, '未上傳檔案', next))

@@ -493,7 +493,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"nick\",\r\n    \"email\": \"nick@gmail.com\",\r\n    \"password\": \"1234567890\",\r\n    \"password2\": \"1234567890\"\r\n}",
+							"raw": "{\r\n    \"name\": \"mike\",\r\n    \"email\": \"mike@gmail.com\",\r\n    \"password\": \"1234567890\",\r\n    \"password2\": \"1234567890\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -778,7 +778,8 @@
 		{
 			"key": "baseUrl",
 			"value": "https://cryptic-citadel-29110.herokuapp.com",
-			"type": "string"
+			"type": "string",
+			"disabled": true
 		},
 		{
 			"key": "baseUrl",
@@ -788,17 +789,22 @@
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyODY0YjcxZjdhNDljYjVlMGQ0NWNhZSIsImlhdCI6MTY1Mzc0MzUyOCwiZXhwIjoxNjYxNTE5NTI4fQ.0SkWq_Q66ccfveWCNlu8Qr-I01jGVGDuGxKxWgfcwnY",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyOTc3YmU5NmRmNjE0YzA4YzcwNTYzOCIsImlhdCI6MTY1NDYxODM4MCwiZXhwIjoxNjYyMzk0MzgwfQ.P3o2dy-yHo9gqSVosMb1-Kdn2285OiCmBlGBm_hwp2g",
 			"type": "string"
 		},
 		{
 			"key": "userId",
-			"value": "6292008e1ed1c672f2cf3461",
+			"value": "62977b616df614c08c705632",
 			"type": "string"
 		},
 		{
 			"key": "postId",
-			"value": "6290d8833742db883c2afe5e",
+			"value": "629f720ec1935b137464d125",
+			"type": "string"
+		},
+		{
+			"key": "baseUrl",
+			"value": "https://secret-mesa-71998.herokuapp.com",
 			"type": "string"
 		}
 	]
